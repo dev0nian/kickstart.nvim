@@ -198,7 +198,8 @@ vim.keymap.set('n', '/', [[/\v]], { desc = 'Magic search by default' })
 -- Toggles
 vim.keymap.set('n', '<leader>tc', '<cmd>ColorToggle<CR>', { desc = 'Toggle inline color' })
 vim.keymap.set('n', '<leader>tu', '<cmd>UndotreeToggle<CR>', { desc = 'Toggle undotree' })
-vim.keymap.set('n', '<leader>tt', '<cmd>ToggleTerm<CR>', { desc = 'Toggle terminal' })
+
+vim.keymap.set('v', '<leader>y', [["+y]], { desc = 'Copy to system clipboard' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -289,46 +290,47 @@ require('lazy').setup({
   },
 
   -- Folding using treesitter
-  -- {
-  --   'kevinhwang91/nvim-ufo',
-  --   dependencies = {
-  --     'kevinhwang91/promise-async',
-  --   },
-  --   config = function()
-  --     vim.o.foldcolumn = '1' -- '0' is not bad
-  --     vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
-  --     vim.o.foldlevelstart = 99
-  --     vim.o.foldenable = true
-  --
-  --     -- Using ufo provider need remap `zR` and `zM`. If Neovim is 0.6.1, remap yourself
-  --     vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
-  --     vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
-  --
-  --     require('ufo').setup {
-  --       provider_selector = function(_bufnr, _filetype, _buftype)
-  --         return { 'treesitter', 'indent' }
-  --       end,
-  --     }
-  --   end,
-  -- },
+  {
+    'kevinhwang91/nvim-ufo',
+    dependencies = {
+      'kevinhwang91/promise-async',
+    },
+    config = function()
+      vim.o.foldcolumn = '1' -- '0' is not bad
+      vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+      vim.o.foldlevelstart = 99
+      vim.o.foldenable = true
 
-  -- Here is a more advanced example where we pass configuration
-  -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
-  --    require('gitsigns').setup({ ... })
-  --
-  -- See `:help gitsigns` to understand what the configuration keys do
-  -- Adds git related signs to the gutter, as well as utilities for managing changes
+      -- Using ufo provider need remap `zR` and `zM`. If Neovim is 0.6.1, remap yourself
+      vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
+      vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
+
+      require('ufo').setup {
+        provider_selector = function(_bufnr, _filetype, _buftype)
+          return { 'treesitter', 'indent' }
+        end,
+      }
+    end,
+  },
+
+  -- Gitsigns
   {
     'lewis6991/gitsigns.nvim',
-    opts = {
-      signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-      },
-    },
+    config = function()
+      require('gitsigns').setup {
+        signs = {
+          add = { text = '│' },
+          change = { text = '│' },
+          delete = { text = '󰍵' },
+          topdelete = { text = '‾' },
+          changedelete = { text = '~' },
+          untracked = { text = '│' },
+        },
+      }
+      vim.keymap.set('n', '<leader>gR', '<cmd>Gitsigns reset_buffer<CR>', { desc = '[G]it [R]eset Buffer' })
+      vim.keymap.set('n', '<leader>gd', '<cmd>Gitsigns diffthis<CR>', { desc = '[G]it [D]iff' })
+      vim.keymap.set('n', '<leader>gB', '<cmd>Gitsigns toggle_current_line_blame<CR>', { desc = '[G]it [B]lame' })
+    end,
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
@@ -462,10 +464,9 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sm', '<cmd>Telescope marks<CR>', { desc = '[S]earch [M]arks' })
 
       -- Git
-      vim.keymap.set('n', '<leader>gd', '<cmd>Gitsigns diffthis<CR>', { desc = '[G]it [D]iff' })
-      vim.keymap.set('n', '<leader>gB', '<cmd>Gitsigns toggle_current_line_blame<CR>', { desc = '[G]it [B]lame' })
       vim.keymap.set('n', '<leader>gb', '<cmd>Telescope git_bcommits<CR>', { desc = '[G]it [B]uffer commits' })
       vim.keymap.set('n', '<leader>gc', '<cmd>Telescope git_commits<CR>', { desc = '[G]it [C]ommits' })
+      vim.keymap.set('n', '<leader>gs', '<cmd>Telescope git_status<CR>', { desc = '[G]it [D]iff' })
 
       -- Slightly advanced example of overriding default behavior and theme
       -- vim.keymap.set('n', '<leader>/', function()
@@ -534,27 +535,46 @@ require('lazy').setup({
   { 'mbbill/undotree' },
 
   -- Better terminal
-  { 'akinsho/toggleterm.nvim', opts = {} },
-
-  -- Connect output from formatter/linter to client LSP
   {
-    'jose-elias-alvarez/null-ls.nvim',
-    dependencies = { 'nvim-lua/plenary.nvim' },
+    'akinsho/toggleterm.nvim',
     config = function()
-      local null_ls = require 'null-ls'
-      null_ls.setup {
-        sources = {
-          -- not setting "vue" at the moment cause need to correctly configure eslintrc
-          null_ls.builtins.formatting.eslint_d.with {
-            filetypes = { 'javascript', 'typescript' },
-          },
-          null_ls.builtins.diagnostics.eslint_d.with {
-            filetypes = { 'javascript', 'typescript' },
-          },
-        },
-      }
+      require('toggleterm').setup {}
+      vim.keymap.set('n', '<leader>tt', '<cmd>ToggleTerm direction=horizontal<CR>', { desc = 'Toggle terminal' })
+      vim.keymap.set('n', '<leader>tT', '<cmd>ToggleTerm direction=tab<CR>', { desc = 'Toggle terminal' })
+
+      -- Toggle lazygit
+      local Terminal = require('toggleterm.terminal').Terminal
+      local lazygit = Terminal:new { cmd = 'lazygit', hidden = true, direction = 'float' }
+
+      function Lazygit_Toggle()
+        lazygit:toggle()
+      end
+
+      vim.keymap.set('n', '<leader>gl', '<cmd>lua Lazygit_Toggle()<CR>', { noremap = true, silent = true, desc = 'Toggle lazygit' })
     end,
   },
+
+  -- Connect output from formatter/linter to client LSP
+  -- NOTE: Commenting below cause we now have an eslint LSP, which you can install via Mason
+  -- Also null_ls is no longer maintained, if needed use nvimtools/none-ls instead
+  -- {
+  --   'jose-elias-alvarez/null-ls.nvim',
+  --   dependencies = { 'nvim-lua/plenary.nvim' },
+  --   config = function()
+  --     local null_ls = require 'null-ls'
+  --     null_ls.setup {
+  --       sources = {
+  --         -- not setting "vue" at the moment cause need to correctly configure eslintrc
+  --         null_ls.builtins.formatting.eslint_d.with {
+  --           filetypes = { 'javascript', 'typescript' },
+  --         },
+  --         null_ls.builtins.diagnostics.eslint_d.with {
+  --           filetypes = { 'javascript', 'typescript' },
+  --         },
+  --       },
+  --     }
+  --   end,
+  -- },
 
   { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
@@ -962,13 +982,13 @@ require('lazy').setup({
     -- change the command in the config to whatever the name of that colorscheme is.
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
+    'sainnhe/sonokai',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'sonokai'
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
@@ -987,7 +1007,7 @@ require('lazy').setup({
       --  - va)  - [V]isually select [A]round [)]paren
       --  - yinq - [Y]ank [I]nside [N]ext [']quote
       --  - ci'  - [C]hange [I]nside [']quote
-      require('mini.ai').setup { n_lines = 500 }
+      -- require('mini.ai').setup { n_lines = 500 }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
