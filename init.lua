@@ -554,6 +554,17 @@ require('lazy').setup({
     end,
   },
 
+  -- Better quickfix
+  {
+    'stevearc/qf_helper.nvim',
+    config = function()
+      require('qf_helper').setup {}
+      vim.keymap.set('n', '<leader>qq', '<cmd>QFToggle<CR>', { noremap = true, silent = true, desc = "Toggle quickfix" })
+      vim.keymap.set('n', '<leader>qn', '<cmd>QNext<CR>', { noremap = true, silent = true, desc = "Next quickfix" })
+      vim.keymap.set('n', '<leader>qp', '<cmd>QPrev<CR>', { noremap = true, silent = true, desc = "Previous quickfix" })
+    end
+  },
+
   -- Connect output from formatter/linter to client LSP
   -- NOTE: Commenting below cause we now have an eslint LSP, which you can install via Mason
   -- Also null_ls is no longer maintained, if needed use nvimtools/none-ls instead
