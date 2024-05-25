@@ -540,7 +540,7 @@ require('lazy').setup({
     config = function()
       require('toggleterm').setup {}
       vim.keymap.set('n', '<leader>tt', '<cmd>ToggleTerm direction=horizontal<CR>', { desc = 'Toggle terminal' })
-      vim.keymap.set('n', '<leader>tT', '<cmd>ToggleTerm direction=tab<CR>', { desc = 'Toggle terminal' })
+      vim.keymap.set('n', '<leader>tT', '<cmd>ToggleTerm direction=tab<CR>', { desc = 'Toggle terminal in tab' })
 
       -- Toggle lazygit
       local Terminal = require('toggleterm.terminal').Terminal
