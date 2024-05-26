@@ -165,7 +165,7 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>ce', vim.diagnostic.setqflist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 vim.keymap.set('n', '<leader>\t', '<C-6>', { desc = 'Last used buffer' })
 
@@ -365,6 +365,7 @@ require('lazy').setup({
         ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
         ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
         ['<leader>S'] = { name = '[S]ession', _ = 'which_key_ignore' },
+        ['<leader>q'] = { name = '[Q]uickfix', _ = 'which_key_ignore' },
       }
       -- visual mode
       require('which-key').register({
@@ -559,10 +560,10 @@ require('lazy').setup({
     'stevearc/qf_helper.nvim',
     config = function()
       require('qf_helper').setup {}
-      vim.keymap.set('n', '<leader>qq', '<cmd>QFToggle<CR>', { noremap = true, silent = true, desc = "Toggle quickfix" })
-      vim.keymap.set('n', '<leader>qn', '<cmd>QNext<CR>', { noremap = true, silent = true, desc = "Next quickfix" })
-      vim.keymap.set('n', '<leader>qp', '<cmd>QPrev<CR>', { noremap = true, silent = true, desc = "Previous quickfix" })
-    end
+      vim.keymap.set('n', '<leader>qq', '<cmd>QFToggle<CR>', { noremap = true, silent = true, desc = 'Toggle quickfix' })
+      vim.keymap.set('n', '<leader>qn', '<cmd>QNext<CR>', { noremap = true, silent = true, desc = 'Next quickfix' })
+      vim.keymap.set('n', '<leader>qp', '<cmd>QPrev<CR>', { noremap = true, silent = true, desc = 'Previous quickfix' })
+    end,
   },
 
   -- Connect output from formatter/linter to client LSP
@@ -788,6 +789,9 @@ require('lazy').setup({
             },
           },
         },
+        eslint = {
+          filetypes = { 'typescript', 'javascript' },
+        },
       }
 
       -- Ensure the servers and tools above are installed
@@ -840,7 +844,7 @@ require('lazy').setup({
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
+        local disable_filetypes = { c = true, cpp = true, vue = true }
         return {
           timeout_ms = 500,
           lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
