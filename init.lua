@@ -328,6 +328,7 @@ require('lazy').setup({
         },
       }
       vim.keymap.set('n', '<leader>gR', '<cmd>Gitsigns reset_buffer<CR>', { desc = '[G]it [R]eset Buffer' })
+      vim.keymap.set('n', '<leader>gr', '<cmd>Gitsigns reset_hunk<CR>', { desc = '[G]it [r]eset hunk' })
       vim.keymap.set('n', '<leader>gd', '<cmd>Gitsigns diffthis<CR>', { desc = '[G]it [D]iff' })
       vim.keymap.set('n', '<leader>gB', '<cmd>Gitsigns toggle_current_line_blame<CR>', { desc = '[G]it [B]lame' })
     end,
